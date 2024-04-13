@@ -1,0 +1,48 @@
+cmd > npm install -g --unsafe-perm node-red > node-red
+
+No navegador:
+localhost:1880
+
+--//--
+
+Manage palette > Install > Digitar "node-red-node-watson" > Install
+Digitar "node-red-contrib-telegrambot" > Install
+
+Inserir Assistant v2 (Watson) e Telegram Sender/Receiver
+
+No site da IBM:
+cloud.ibm.com
+Resource list > copiar API e URL
+Watson > copiar Assistant ID
+
+No Node:
+Watson Assistant v2 > colar API, URL e Assistant ID
+
+No Telegram:
+BotFather > /newbot > copiar token
+
+No Node:
+Telegram Receiver > Add new Telegram bot > inserir nome e token > adicionar bot ao Telegram Sender
+Inserir Function entre Receiver e Assistant > nome "prepWA" (pré-processamento Watson Assistant):
+
+msg.params={
+	"session_id": 123
+};
+msg.chatId = msg.payload.chatId;
+msg.payload = msg.payload.content;
+return msg;
+
+Inserir Function entre Assistant e Sender > nome "pospWA" > On Message:
+
+msg.payload = {
+	chatId: msg.chatId,
+	type: "message",
+	content: msg.payload.output.generic[0].text
+}
+return msg;
+
+No IBM Cloud:
+Procurar "Speech to text" > Create
+
+No Node:
+IBM Watson > Speech to text > inserir API e URL > checkar "Place output on msg.payload" > Flush Config Cache > alterar idioma
